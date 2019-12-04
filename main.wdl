@@ -12,16 +12,19 @@ workflow GenericMicrosatelliteIdentification {
 
     String output_zip_name
 
+    File loci_bed
+    
     # Reference files
     File ref_fasta
     File ref_fasta_index
-    File ref_dict
-    File ref_bwt
-    File ref_sa
-    File ref_amb
-    File ref_ann
-    File ref_pac
+    File ref_index_1
+    File ref_index_2
+    File ref_index_3
+    File ref_index_4
+    File ref_rev_1
+    File ref_rev_2
 
+    # git repo info for report
     String git_repo_url
     String git_commit_hash
 
@@ -40,14 +43,15 @@ workflow GenericMicrosatelliteIdentification {
             input:
                 r1_fastq = item.left,
                 r2_fastq = item.right,
+                loci_bed = loci_bed,
                 ref_fasta = ref_fasta,
                 ref_fasta_index = ref_fasta_index,
-                ref_dict = ref_dict,
-                ref_pac = ref_pac,
-                ref_bwt = ref_bwt,
-                ref_sa = ref_sa,
-                ref_amb = ref_amb,
-                ref_ann = ref_ann
+                ref_index_1 = ref_index_1,
+                ref_index_2 = ref_index_2,
+                ref_index_3 = ref_index_3,
+                ref_index_4 = ref_index_4,
+                ref_rev_1 = ref_rev_1,
+                ref_rev_2 = ref_rev_2
         }
     }
 

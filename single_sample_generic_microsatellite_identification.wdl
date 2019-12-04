@@ -4,15 +4,17 @@ workflow SingleSampleGenericMicrosatelliteIdentification {
     File r1_fastq
     File r2_fastq
     String basename = basename(r1_fastq, "_R1.fastq.gz")
+
+    File loci_bed
     
     File ref_fasta
     File ref_fasta_index
-    File ref_dict
-    File ref_bwt
-    File ref_sa
-    File ref_amb
-    File ref_ann
-    File ref_pac
+    File ref_index_1
+    File ref_index_2
+    File ref_index_3
+    File ref_index_4
+    File ref_rev_1
+    File ref_rev_2
 
     call remove_adapters {
         input:
@@ -30,12 +32,23 @@ workflow SingleSampleGenericMicrosatelliteIdentification {
 
     call convert_FQ_to_FA {
         input:
-            fastq = fastq
+            fastq = merge_fastq_pairs.merged_fastq,
+            basename = basename
     }
 
     call identify_with_phobos {
-        
-
+        input:
+            fasta = convert_FQ_to_FA.fasta,
+            basename = basename,
+            loci_bed = loci_bed,
+            ref_fasta = ref_fasta,
+            ref_fasta_index = ref_fasta_index,
+            ref_index_1 = ref_index_1,
+            ref_index_2 = ref_index_2,
+            ref_index_3 = ref_index_3,
+            ref_index_4 = ref_index_4,
+            ref_rev_1 = ref_rev_1,
+            ref_rev_2 = ref_rev_2
     }
 
     call bwa_align.perform_align as alignment {
@@ -119,6 +132,14 @@ task identify_with_phobos {
     File fasta
     String basename
     File loci_bed
+    File ref_fasta
+    File ref_fasta_index
+    File ref_index_1
+    File ref_index_2
+    File ref_index_3
+    File ref_index_4
+    File ref_rev_1
+    File ref_rev_2
 
     command {
         # Identify microsatellites with PHOBOS
@@ -154,7 +175,7 @@ task identify_with_phobos {
         /opt/software/bowtie2-2.3.5.1-linux-x86_64/bowtie2 \
             --no-unal \
             -f \
-            -x ${ref} \
+            -x ${ref_fasta} \
             -1 ${basename}.ms_flanking.1.fa \
             -2 ${basename}.ms_flanking.2.fa \
         2> ${basename}.aln_stats.txt \
