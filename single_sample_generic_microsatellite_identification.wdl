@@ -82,7 +82,7 @@ task merge_fastq_pairs {
     String basename
 
     command {
-        /opt/software/bbmerge.sh \
+        /opt/software/bbmap/bbmerge.sh \
             in=${r1_fastq} \
             in2=${r2_fastq} \
             out=${basename}.fastq.gz \
@@ -105,7 +105,9 @@ task convert_fq_to_fa {
     String basename
 
     command {
-        /opt/software/seqtk seq -a ${fastq} > ${basename}.fasta
+        /opt/software/seqtk-1.3/seqtk seq \
+            -a ${fastq} \
+        > ${basename}.fasta
     }
 
     output {
@@ -126,7 +128,7 @@ task identify_with_phobos {
         # --minUnitLen 1 - minimum repeating units
         # --maxUnitLen 6 - maximum repeating units
         # --flanking - print 150bp flanking nucleotides in read
-        /opt/software/phobos/bin/phobos... \
+        /opt/software/phobos-v3.3.12-linux/bin/phobos_64_libstdc++6 \
             ${fasta} \
             ${basename}.phobos \
             -M imperfect \
@@ -149,14 +151,14 @@ task identify_with_phobos {
         # Align the flanking reads to genome
         # Filter for good map quality, locus of interest, and concordant mapping
         # Collate read names
-        /opt/software/bowtie2 \
+        /opt/software/bowtie2-2.3.5.1-linux-x86_64/bowtie2 \
             --no-unal \
             -f \
             -x ${ref} \
             -1 ${basename}.ms_flanking.1.fa \
             -2 ${basename}.ms_flanking.2.fa \
         2> ${basename}.aln_stats.txt \
-        | ~/bin/samtools view -q 10 -f 3 -L ${loci_bed} \
+        | /opt/software/samtools/bin/samtools view -q 10 -f 3 -L ${loci_bed} \
         | cut -f1 \
         | sed 's/aaa/\|/g' \
         | cut -f1 -d'|' \
@@ -165,8 +167,10 @@ task identify_with_phobos {
         > ${basename}.flt.names.txt;
         # Filter the PHOBOS output for reads in the filtered 'good' selection
         # Filter the FASTQ with seqtk, then run PHOBOS again
-        ~/bin/seqtk subseq ${basename}.fasta ${basename}.flt.names.txt > ${basename}.flt.fasta;
-        ../bin/phobos-v3.3.12-mac/bin/phobos-mac-intel-64bit-start-from-command-line  \
+        /opt/software/seqtk-1.3/seqtk subseq \
+            ${basename}.fasta ${basename}.flt.names.txt \
+        > ${basename}.flt.fasta;
+        /opt/software/phobos-v3.3.12-linux/bin/phobos_64_libstdc++6 \
             ${basename}.flt.fasta  \
             ${basename}.flt.phobos \
             -M imperfect \
@@ -177,7 +181,7 @@ task identify_with_phobos {
             --flanking 150 \
             --outputFormat 3;
         # Filter the PHOBOS with the python script again (with fltonly flag)
-        python3 ../bin/parse_phobos.py \
+        python3 /opt/software/parse_phobos.py \
             --minflanking 10 \
             --fltonly \
             $f \
