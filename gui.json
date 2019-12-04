@@ -18,13 +18,15 @@
 		{
 			"target": {
                 "target_ids": [
-					"GenericMicrosatelliteIdentification.index1",
-					"GenericMicrosatelliteIdentification.index2",
-					"GenericMicrosatelliteIdentification.index3",
-					"GenericMicrosatelliteIdentification.index4",
-					"GenericMicrosatelliteIdentification.rev1",
-					"GenericMicrosatelliteIdentification.rev2",
-					"GenericMicrosatelliteIdentification.genome"
+					"GenericMicrosatelliteIdentification.genome",
+					"GenericMicrosatelliteIdentification.ref_fasta",
+					"GenericMicrosatelliteIdentification.ref_fasta_index",
+					"GenericMicrosatelliteIdentification.ref_index1",
+					"GenericMicrosatelliteIdentification.ref_index2",
+					"GenericMicrosatelliteIdentification.ref_index3",
+					"GenericMicrosatelliteIdentification.ref_index4",
+					"GenericMicrosatelliteIdentification.ref_rev1",
+					"GenericMicrosatelliteIdentification.ref_rev2"
                     ],
 				"name": "genome_choice",
 				"handler": "genome_mapper.py"
